@@ -1,4 +1,16 @@
 package giangma.ca.nov2024.repository;
 
-public class CategoryRepository {
+import giangma.ca.nov2024.model.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CategoryRepository extends JpaRepository<Category, Long> {
+    Category findByName(String name);
+
+    boolean existsByName(String name);
+
+    Category getCategoriesByName(String name);
+
+    Category getCategoriesById(Long categoryId);
+
+    Category deleteCategoriesById(Long id);
 }

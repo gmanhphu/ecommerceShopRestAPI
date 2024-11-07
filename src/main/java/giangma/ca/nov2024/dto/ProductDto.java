@@ -1,16 +1,13 @@
-package giangma.ca.nov2024.request;
+package giangma.ca.nov2024.dto;
 
 import giangma.ca.nov2024.model.Category;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.*;
+import lombok.Data;
 
 import java.math.BigDecimal;
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-public class AddProductRequest {
+import java.util.List;
 
+@Data
+public class ProductDto {
     private Long id;
     private String name;
     private String brand;
@@ -18,5 +15,5 @@ public class AddProductRequest {
     private int inventory;
     private String description;
     private Category category;
-
+    private List<ImageDto> images;
 }
