@@ -1,15 +1,20 @@
 package giangma.ca.nov2024.service.product;
 
-import giangma.ca.nov2024.exceptions.ProductNotFoundException;
+import giangma.ca.nov2024.dto.ImageDto;
+import giangma.ca.nov2024.dto.ProductDto;
 import giangma.ca.nov2024.exceptions.ResourceNotFoundException;
 import giangma.ca.nov2024.model.Category;
+import giangma.ca.nov2024.model.Image;
 import giangma.ca.nov2024.model.Product;
 import giangma.ca.nov2024.repository.CategoryRepository;
+import giangma.ca.nov2024.repository.ImageRepository;
 import giangma.ca.nov2024.repository.ProductRepository;
 import giangma.ca.nov2024.request.AddProductRequest;
 import giangma.ca.nov2024.request.ProductUpdateRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -18,8 +23,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService implements IProductService {
 
-    private ProductRepository productRepository;
+
+    private final ModelMapper modelMapper;
+    private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ImageRepository imageRepository;
+
+
+
     @Override
     public Product addProduct(AddProductRequest request) {
         // check if the category is found in the DB
@@ -50,7 +61,7 @@ public class ProductService implements IProductService {
     @Override
     public Product getProductById(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("Product not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found!"));
 
     }
 
@@ -63,8 +74,8 @@ public class ProductService implements IProductService {
     public Product updateProduct(ProductUpdateRequest request, Long productId) {
         return productRepository.findById(productId)
                 .map(existingProduct -> updateExistingProduct(existingProduct, request))
-                .map(productRepository ::save)
-                .orElseThrow(()-> new ResourceNotFoundException("Product not found!"));
+                .map(productRepository::save)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found!"));
     }
 
 
@@ -97,7 +108,7 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getProductsByCategoryAndBrand(String category, String brand) {
-        return productRepository.findByCategoryCategoryAndBrand(category, brand);
+        return productRepository.findByCategoryNameAndBrand(category, brand);
     }
 
     @Override
@@ -113,5 +124,21 @@ public class ProductService implements IProductService {
     @Override
     public Long countProductsByBrandAndName(String brand, String name) {
         return productRepository.countByBrandAndName(brand, name);
+    }
+
+    @Override
+    public List<ProductDto> getConvertedProducts(List<Product> products) {
+        return products.stream().map(this::convertToDto).toList();
+    }
+
+    @Override
+    public ProductDto convertToDto(Product product) {
+        ProductDto productDto = modelMapper.map(product, ProductDto.class);
+        List<Image> images = imageRepository.findByProductId(product.getId());
+        List<ImageDto> imageDtos = images.stream()
+                .map(image -> modelMapper.map(image, ImageDto.class))
+                .toList();
+        productDto.setImages(imageDtos);
+        return productDto;
     }
 }
