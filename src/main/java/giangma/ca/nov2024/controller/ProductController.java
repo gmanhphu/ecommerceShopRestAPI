@@ -17,6 +17,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin(origins = "http://localhost:4200") // Allow requests from Angular app
 @RequestMapping("${api.prefix}/products")
 public class ProductController {
     private final IProductService productService;
