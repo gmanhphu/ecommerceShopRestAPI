@@ -7,8 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 
-@RunWith(SpringRunner.class)
-@DataJpaTest
 @SpringBootTest(classes = Nov2024Application.class)
 class Nov2024ApplicationTests {
 
